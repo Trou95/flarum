@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - '8080:80'
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+      - web_data:/var/www/html
+    networks:
+      - nw_flarum
+
+  php-fpm:
+    build: .
+    volumes:
+      - web_data:/var/www/html
+    networks:
+      - nw_flarum
+
+  mysql:
+    image: mysql:8.0.23
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: flarum
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 1234
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - nw_flarum
+    ports:
+      - 3306:3306
+
+networks:
+  nw_flarum:
+
+
+volumes:
+  mysql_data:
+  web_data: # web_data volume'ını tanımlıyoruz
